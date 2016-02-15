@@ -191,6 +191,30 @@ module Systemd
       end
     end
 
+    def runtime_files?
+      unless Native.at_least_v229?
+        raise ArgumentError, 'This version of libsystemd does not support this functionality'
+      end
+
+      if (rc = Native.sd_journal_has_runtime_files(@ptr, threshold)) < 0
+        raise JournalError, rc
+      end
+
+      rc == 1
+    end
+
+    def persistent_files?
+      unless Native.at_least_v229?
+        raise ArgumentError, 'This version of libsystemd does not support this functionality'
+      end
+
+      if (rc = Native.sd_journal_has_persistent_files(@ptr, threshold)) < 0
+        raise JournalError, rc
+      end
+
+      rc == 1
+    end
+
     # @private
     def inspect
       format(
